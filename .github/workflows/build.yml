@@ -136,10 +136,21 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    # Simple: run on main OR manual trigger (any branch)
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    # Debug: Let's see what's happening
+    if: always() && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
     
     steps:
+    - name: Debug info
+      run: |
+        echo "=== DEBUG INFO ==="
+        echo "github.ref: ${{ github.ref }}"
+        echo "github.event_name: ${{ github.event_name }}"
+        echo "github.ref_name: ${{ github.ref_name }}"
+        echo "Condition check:"
+        echo "github.ref == 'refs/heads/main': ${{ github.ref == 'refs/heads/main' }}"
+        echo "github.event_name == 'workflow_dispatch': ${{ github.event_name == 'workflow_dispatch' }}"
+        echo "=== END DEBUG ==="
+    
     - uses: actions/checkout@v4
     
     - name: Get version
@@ -157,10 +168,22 @@ jobs:
       with:
         path: artifacts
     
+    - name: Flatten artifacts structure
+      run: |
+        echo "=== Original structure ==="
+        find artifacts -type f -name "*.*" | head -10
+        
+        echo "=== Flattening structure ==="
+        mkdir -p release-files
+        find artifacts -type f \( -name "*.deb" -o -name "*.AppImage" -o -name "*.dmg" -o -name "*.msi" -o -name "*.exe" \) -exec cp {} release-files/ \;
+        
+        echo "=== Final files for release ==="
+        ls -la release-files/
+    
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "artifacts/**/*"
+        artifacts: "release-files/*"
         tag: "${{ steps.version.outputs.tag }}"
         name: "Claudia ${{ steps.version.outputs.tag }}"
         body: |
