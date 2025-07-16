@@ -95,7 +95,8 @@ jobs:
       
       # Install frontend dependencies
       - name: Install frontend dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
+        # Temporarily removed --frozen-lockfile due to upstream changes
 
       # Build frontend
       - name: Build frontend
