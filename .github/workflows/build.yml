@@ -136,6 +136,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    # Simple: run on main OR manual trigger (any branch)
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     
     steps:
@@ -145,7 +146,11 @@ jobs:
       id: version
       run: |
         VERSION=$(grep '^version = ' src-tauri/Cargo.toml | head -1 | cut -d '"' -f 2)
-        echo "tag=v$VERSION-build${{ github.run_number }}" >> $GITHUB_OUTPUT
+        if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
+          echo "tag=v$VERSION-test-${{ github.run_number }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=v$VERSION-build${{ github.run_number }}" >> $GITHUB_OUTPUT
+        fi
     
     - name: Download all artifacts
       uses: actions/download-artifact@v4
@@ -159,7 +164,7 @@ jobs:
         tag: "${{ steps.version.outputs.tag }}"
         name: "Claudia ${{ steps.version.outputs.tag }}"
         body: |
-          Auto-generated release from commit ${{ github.sha }}
+          ${{ github.ref != 'refs/heads/main' && '🧪 **TEST RELEASE**' || 'Auto-generated release' }} from commit ${{ github.sha }}
           
           **Available downloads:**
           - **Linux**: .deb package, .AppImage
@@ -172,6 +177,6 @@ jobs:
           **Not yet supported:**
           - Windows installers (see #83)
           - macOS Universal builds (missing Intel binary)
-        draft: false
-        prerelease: false
+        draft: ${{ github.ref != 'refs/heads/main' }}  # Test releases are drafts
+        prerelease: ${{ github.ref != 'refs/heads/main' }}
         token: ${{ secrets.GITHUB_TOKEN }}
