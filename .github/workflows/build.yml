@@ -168,22 +168,10 @@ jobs:
       with:
         path: artifacts
     
-    - name: Flatten artifacts structure
-      run: |
-        echo "=== Original structure ==="
-        find artifacts -type f -name "*.*" | head -10
-        
-        echo "=== Flattening structure ==="
-        mkdir -p release-files
-        find artifacts -type f \( -name "*.deb" -o -name "*.AppImage" -o -name "*.dmg" -o -name "*.msi" -o -name "*.exe" \) -exec cp {} release-files/ \;
-        
-        echo "=== Final files for release ==="
-        ls -la release-files/
-    
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "release-files/*"
+        artifacts: "artifacts/**/*"
         tag: "${{ steps.version.outputs.tag }}"
         name: "Claudia ${{ steps.version.outputs.tag }}"
         body: |
