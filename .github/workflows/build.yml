@@ -1,4 +1,3 @@
-# .github/workflows/build.yml
 name: Build Claudia
 
 on:
@@ -95,7 +94,7 @@ jobs:
       
       # Install frontend dependencies
       - name: Install frontend dependencies
-        run: bun install # --frozen-lockfile
+        run: bun install #--frozen-lockfile
         # Temporarily removed --frozen-lockfile due to upstream changes
 
       # Build frontend
@@ -145,7 +144,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    # Simple: run on main OR manual trigger (any branch)
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     
     steps:
@@ -181,7 +179,7 @@ jobs:
           
           **Requirements:**
           - Claude Code CLI must be installed
-          - See [installation guide](https://github.com/getAsterisk/claudia#installation) for details
+          - See [installation guide](https://github.com/getAsterisk/claudia?tab=readme-ov-file#-installation) for details
           
           **Not yet supported:**
           - Windows installers (see #83)
