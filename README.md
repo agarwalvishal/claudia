@@ -267,9 +267,9 @@ brew install pkg-config
    bun run tauri build
    
    # The built executable will be in:
-   # - Linux: src-tauri/target/release/bundle/
-   # - macOS: src-tauri/target/release/bundle/
-   # - Windows: src-tauri/target/release/bundle/
+   # - Linux: src-tauri/target/release/
+   # - macOS: src-tauri/target/release/
+   # - Windows: src-tauri/target/release/
    ```
 
 4. **Platform-Specific Build Options**
@@ -277,11 +277,6 @@ brew install pkg-config
    **Debug Build (faster compilation, larger binary)**
    ```bash
    bun run tauri build --debug
-   ```
-   
-   **Build without bundling (creates just the executable)**
-   ```bash
-   bun run tauri build --no-bundle
    ```
    
    **Universal Binary for macOS (Intel + Apple Silicon)**
@@ -338,7 +333,7 @@ The build process creates several artifacts:
   - `.msi` installer (Windows)
   - `.exe` installer (Windows)
 
-All artifacts are located in `src-tauri/target/release/bundle/`.
+All artifacts are located in `src-tauri/target/release/`.
 
 ## 🛠️ Development
 
